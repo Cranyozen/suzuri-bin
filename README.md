@@ -86,3 +86,16 @@ on first push.
   official `zed` package owns, so `zed` and `suzuri-bin` can coexist.
 - The bundled `lib/*.so` in the tarball are not installed: all of the editor's
   dynamic dependencies are satisfied by current Arch libraries.
+- The desktop file is installed as `dev.zed.Zed-Dev.desktop` rather than under
+  the upstream file name `app.suzuri.Suzuri.desktop`. Suzuri ships on Zed's
+  *dev* channel, so the running binary reports
+  `ReleaseChannel::app_id()` == `dev.zed.Zed-Dev` as its Wayland app_id (and as
+  `WM_CLASS` on X11), while `script/bundle-linux` names the bundled desktop file
+  `app.suzuri.Suzuri`. A compositor matches the app_id against the desktop file
+  name, so the mismatch left KDE showing a generic icon in the taskbar.
+  `StartupWMClass` is set to the same id as well.
+
+> Upstream inconsistency: `crates/release_channel/src/lib.rs` (`app_id()`) and
+> `script/bundle-linux` (`APP_ID`) disagree about the dev-channel identifier.
+> This package compensates at install time; the two should really be reconciled
+> upstream.
