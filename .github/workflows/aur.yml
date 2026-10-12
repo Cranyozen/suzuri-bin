@@ -72,6 +72,9 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # No signing key exists on the runner; be explicit so a stray
+          # commit.gpgsign setting cannot turn this into a hard failure.
+          git config commit.gpgsign false
           git add PKGBUILD .SRCINFO
           if git diff --cached --quiet; then
             echo "Nothing changed; skipping commit."
@@ -108,6 +111,7 @@ jobs:
           cd /tmp/aur
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config commit.gpgsign false
           git add -A
           if git diff --cached --quiet; then
             echo "AUR already up to date at ${version}."
