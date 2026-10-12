@@ -1,4 +1,4 @@
-# Maintainer: Cranyozen <61766249+Cranyozen@users.noreply.github.com>
+# Maintainer: Cranyozen <cranyozen@outlook.com>
 # suzuri is NOT in the AUR; this PKGBUILD packages the official prebuilt
 # Linux release tarball so that paru/pacman can manage it.
 
