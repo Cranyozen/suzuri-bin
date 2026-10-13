@@ -86,16 +86,18 @@ on first push.
   official `zed` package owns, so `zed` and `suzuri-bin` can coexist.
 - The bundled `lib/*.so` in the tarball are not installed: all of the editor's
   dynamic dependencies are satisfied by current Arch libraries.
-- The desktop file is installed as `dev.zed.Zed-Dev.desktop` rather than under
-  the upstream file name `app.suzuri.Suzuri.desktop`. Suzuri ships on Zed's
-  *dev* channel, so the running binary reports
-  `ReleaseChannel::app_id()` == `dev.zed.Zed-Dev` as its Wayland app_id (and as
-  `WM_CLASS` on X11), while `script/bundle-linux` names the bundled desktop file
-  `app.suzuri.Suzuri`. A compositor matches the app_id against the desktop file
-  name, so the mismatch left KDE showing a generic icon in the taskbar.
-  `StartupWMClass` is set to the same id as well.
+- The desktop file keeps the name upstream ships (`app.suzuri.Suzuri.desktop` as
+  of 0.5.5), located by globbing the tarball rather than hard-coded. A compositor
+  resolves a window's icon by matching the window's app_id against a desktop file
+  name, so this package has to track upstream's choice: 0.5.4 announced
+  `dev.zed.Zed-Dev` while shipping `app.suzuri.Suzuri.desktop`, which left KDE
+  showing a generic taskbar icon, and 0.5.5 reconciled the two on the runtime
+  side. Only `Exec`/`TryExec` are rewritten to absolute paths.
 
-> Upstream inconsistency: `crates/release_channel/src/lib.rs` (`app_id()`) and
-> `script/bundle-linux` (`APP_ID`) disagree about the dev-channel identifier.
-> This package compensates at install time; the two should really be reconciled
-> upstream.
+> Still inconsistent upstream as of 0.5.5: `crates/zed/build.rs` (`icon_path()`)
+> maps the dev channel to `resources/app-icon-dev.png`, so the icon embedded in
+> the binary as the window icon (`APP_ICON`, resized to 256×256) is Zed's grey dev
+> logo, not Suzuri's inkstone. Wayland compositors ignore it — they read the
+> desktop file — so the taskbar and app menu are fine, but on X11 it becomes
+> `_NET_WM_ICON`. This cannot be fixed in a binary package; it needs an upstream
+> change.
